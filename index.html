@@ -4,106 +4,175 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Core SEO Meta Tags -->
-  <title>OTT Release Dates & Trailers Tracker | Latest Streaming Movies</title>
-  <meta name="description" content="Explore confirmed OTT release dates, streaming platform availability, and official trailers for the latest Malayalam, Hindi, and Indian cinema releases.">
-  <meta name="keywords" content="OTT release dates, latest movie releases, Netflix, Prime Video, Hotstar, SonyLIV, official trailers">
+  <!-- Primary SEO Meta Tags -->
+  <title>OTT Release Dates 2026 | Malayalam, Tamil & Hindi Movies Streaming Tracker</title>
+  <meta name="description" content="Track confirmed OTT release dates, streaming platform availability (Netflix, Prime Video, Hotstar, SonyLIV), and watch official HD trailers for the latest Malayalam and Indian cinema releases.">
+  <meta name="keywords" content="Malayalam OTT release dates, latest OTT releases 2026, streaming movie dates, OTT platform tracker, watch trailers online, Hotstar Malayalam movies, Netflix India release dates, Prime Video Malayalam">
   <link rel="canonical" href="https://yourusername.github.io/ott-tracker/">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="index, follow, max-image-preview:large">
 
-  <!-- Open Graph / Social Sharing -->
+  <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="OTT Release Dates & Official Trailers Tracker">
-  <meta property="og:description" content="Check streaming dates and watch official trailers for the newest theater-to-OTT releases.">
-  <meta property="og:image" content="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=1200">
+  <meta property="og:title" content="OTT Release Dates 2026 | Latest Streaming Movies & Trailers">
+  <meta property="og:description" content="Discover verified OTT dates, streaming platforms, and official trailers for the newest theater releases.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=1200&auto=format&fit=crop">
   <meta property="og:url" content="https://yourusername.github.io/ott-tracker/">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="OTT Release Dates & Official Trailers Tracker">
-  <meta name="twitter:description" content="Check streaming dates and watch official trailers for the newest releases.">
-  <meta name="twitter:image" content="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=1200">
+  <meta name="twitter:title" content="OTT Release Dates 2026 | Movies Streaming Tracker">
+  <meta name="twitter:description" content="Find out where and when your favorite movies are streaming online.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=1200&auto=format&fit=crop">
 
-  <!-- Structured Data: JSON-LD for Google Rich Results -->
+  <!-- Structured Data: FAQ Schema for Google SERP Rich Snippets -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How long after theatrical release do Malayalam movies stream on OTT?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Most Malayalam and South Indian theatrical releases arrive on digital platforms (OTT) within 28 to 45 days after their theater premiere, depending on box office agreements."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which OTT platforms stream new Malayalam films?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "New Malayalam releases are primarily acquired by Disney+ Hotstar, Amazon Prime Video, Netflix, SonyLIV, Zee5, and ManoramaMAX."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Dynamic ItemList Schema Placeholder -->
+  <script type="application/ld+json" id="movie-schema">
+  {
+    "@context": "https://schema.org",
     "@type": "ItemList",
-    "name": "Upcoming & Recent OTT Movie Releases",
-    "description": "Directory of movie release dates across streaming platforms.",
+    "name": "Latest Movie OTT Release Dates",
     "itemListElement": []
   }
   </script>
 
-  <!-- Adsterra Header Scripts (e.g., Social Bar / Popunder if active) -->
-  <!-- <script type='text/javascript' src='//your-adsterra-script.js'></script> -->
+  <!-- ADSTERRA HEADER SCRIPT (Popunder / Social Bar) -->
+  <!-- <script type='text/javascript' src='//your-adsterra-popunder-url.js'></script> -->
 
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Site Navigation -->
+  <!-- Navigation -->
   <nav class="navbar">
     <div class="nav-container">
       <a href="#" class="logo">OTT<span>Radar</span></a>
-      <div class="filters">
-        <select id="language-filter" aria-label="Filter by Language">
-          <option value="ml">Malayalam</option>
-          <option value="hi">Hindi</option>
-          <option value="ta">Tamil</option>
-          <option value="te">Telugu</option>
+      <div class="filter-controls">
+        <select id="language-filter" aria-label="Select Language">
+          <option value="ml">Malayalam (മലയാളം)</option>
+          <option value="ta">Tamil (தமிழ்)</option>
+          <option value="te">Telugu (తెలుగు)</option>
+          <option value="hi">Hindi (हिन्दी)</option>
           <option value="en">English</option>
         </select>
-        <select id="sort-filter" aria-label="Sort Movies">
-          <option value="release_date.desc">Latest OTT Dates</option>
+        <select id="sort-filter" aria-label="Sort by Order">
+          <option value="primary_release_date.desc">Newest Releases</option>
           <option value="popularity.desc">Most Popular</option>
         </select>
       </div>
     </div>
   </nav>
 
-  <!-- Leaderboard Ad Slot (728x90 / Mobile 320x50) -->
-  <div class="ad-wrapper leaderboard-ad" aria-label="Advertisement">
-    <div class="ad-slot">
-      <!-- PASTE ADSTERRA 728x90 OR 320x50 BANNER CODE HERE -->
-      <span class="ad-badge">Advertisement</span>
+  <!-- Ad Zone 1: Responsive Top Leaderboard -->
+  <aside class="ad-section top-banner" aria-label="Sponsors">
+    <div class="ad-slot ad-leaderboard">
+      <!-- PASTE ADSTERRA 728x90 (Desktop) / 320x50 (Mobile) SCRIPT HERE -->
+      <span class="ad-label">Advertisement</span>
     </div>
-  </div>
+  </aside>
 
-  <!-- Hero Section -->
-  <header class="hero">
-    <h1>Latest OTT Movie Release Dates & Trailers</h1>
-    <p>Track streaming premieres on Netflix, Prime Video, Disney+ Hotstar, and SonyLIV.</p>
+  <!-- Hero Header -->
+  <header class="hero-section">
+    <h1>OTT Release Dates & Streaming Tracker</h1>
+    <p>Track confirmed streaming premieres, platform details, and official trailers across Indian cinema.</p>
   </header>
 
-  <!-- Main Grid -->
-  <main class="content-wrapper">
+  <!-- Main Movie Grid Section -->
+  <main class="main-wrapper">
     <section id="movie-grid" class="movie-grid" aria-live="polite">
-      <!-- Dynamic movie cards injected by app.js -->
+      <!-- Injected by app.js -->
+    </section>
+
+    <!-- Ad Zone 2: Mid-Content Native Banner -->
+    <aside class="ad-section mid-banner" aria-label="Sponsors">
+      <div class="ad-slot ad-horizontal">
+        <!-- PASTE ADSTERRA NATIVE BANNER / 4:1 BANNER SCRIPT HERE -->
+        <span class="ad-label">Sponsored Highlight</span>
+      </div>
+    </aside>
+
+    <!-- SEO Content Section: Blogs & Insights -->
+    <section class="seo-articles" id="guide">
+      <h2>Comprehensive Guide to 2026 OTT Movie Releases</h2>
+      
+      <div class="articles-grid">
+        <article class="article-card">
+          <h3>Understanding Theatrical to OTT Windows</h3>
+          <p>Indian cinema typically observes a <strong>4 to 8-week window</strong> between theatrical distribution and digital premieres. Blockbuster hits that perform exceptionally well in theaters may extend their theatrical exclusivity, while smaller releases often transition to OTT platforms within 30 days.</p>
+        </article>
+
+        <article class="article-card">
+          <h3>Where to Stream Malayalam Cinema Online</h3>
+          <p>Regional cinema has found massive global viewership on platforms like <strong>Disney+ Hotstar</strong>, <strong>Amazon Prime Video</strong>, and <strong>SonyLIV</strong>. Regional niche platforms such as <em>ManoramaMAX</em> and <em>Saina Play</em> also release exclusive direct-to-digital films and festival favorites.</p>
+        </article>
+
+        <article class="article-card">
+          <h3>How OTT Release Dates Are Verified</h3>
+          <p>Dates listed on OTTRadar combine official studio announcements, streaming platform schedule slates, and verifiable metadata straight from the global TMDB digital catalog to ensure reliable watch dates.</p>
+        </article>
+      </div>
+
+      <!-- FAQ Accordion for Search Bot Optimization -->
+      <div class="faq-container">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-item">
+          <h4>Why do some movies show "OTT Date: TBA"?</h4>
+          <p>Streaming rights are sometimes negotiated after the theatrical run concludes. When a distributor has not finalized digital rights, the title remains marked as TBA until officially announced.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Can I watch full movies directly on this portal?</h4>
+          <p>No. OTTRadar provides release schedules, official trailers, and direct routing to verified streaming services to ensure creators are supported legitimately.</p>
+        </div>
+      </div>
     </section>
   </main>
 
-  <!-- In-Feed / Bottom Ad Slot -->
-  <div class="ad-wrapper native-ad" aria-label="Advertisement">
-    <div class="ad-slot">
-      <!-- PASTE ADSTERRA 4:1 OR NATIVE BANNER SCRIPT HERE -->
-      <span class="ad-badge">Sponsored Content</span>
+  <!-- Ad Zone 3: Sticky Bottom Anchor (High CTR on Mobile Devices) -->
+  <div class="sticky-ad-bar" id="sticky-bottom-ad">
+    <div class="sticky-ad-content">
+      <!-- PASTE ADSTERRA MOBILE 320x50 OR SOCIAL BAR SCRIPT HERE -->
+      <span class="ad-label">Advertisement</span>
+      <button class="sticky-close" onclick="document.getElementById('sticky-bottom-ad').style.display='none'" aria-label="Close ad">&times;</button>
     </div>
   </div>
 
-  <!-- Accessible YouTube Trailer Modal -->
+  <!-- Accessible Trailer Modal -->
   <div id="trailer-modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modal-overlay" id="modal-overlay"></div>
     <div class="modal-container">
-      <button class="modal-close" id="modal-close" aria-label="Close trailer">&times;</button>
+      <button class="modal-close" id="modal-close" aria-label="Close trailer window">&times;</button>
       <div class="video-responsive">
-        <iframe id="trailer-iframe" src="" title="YouTube Trailer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe id="trailer-iframe" src="" title="Movie Trailer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     </div>
   </div>
 
   <footer>
-    <p>&copy; 2026 OTTRadar. Streaming platforms and poster copyrights belong to their respective distributors.</p>
+    <p>&copy; 2026 OTTRadar. All movie posters, titles, and platform logos are trademarks of their respective streaming networks.</p>
   </footer>
 
   <script src="app.js"></script>
