@@ -95,6 +95,17 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="ad-label">Sponsored</span>
           <div style="font-size:0.85rem; color:#94a3b8; margin: 1rem 0;">Adsterra In-Feed Recommendation</div>
           <!-- PASTE ADSTERRA 300x250 RECTANGLE CODE HERE -->
+          <script>
+  atOptions = {
+    'key' : 'c539c879376eb0b85d2aadbcf565e1b7',
+    'format' : 'iframe',
+    'height' : 250,
+    'width' : 300,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highrevenueformat.com/c539c879376eb0b85d2aadbcf565e1b7/invoke.js"></script>
+
           <div style="width:250px; height:250px; background:#1e2433; display:flex; align-items:center; justify-content:center; font-size:0.75rem; color:#64748b; border: 1px dashed #334155;">
             Adsterra Native Ad
           </div>
