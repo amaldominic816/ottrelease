@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Core SEO Meta Tags -->
+  <title>OTT Release Dates & Trailers Tracker | Latest Streaming Movies</title>
+  <meta name="description" content="Explore confirmed OTT release dates, streaming platform availability, and official trailers for the latest Malayalam, Hindi, and Indian cinema releases.">
+  <meta name="keywords" content="OTT release dates, latest movie releases, Netflix, Prime Video, Hotstar, SonyLIV, official trailers">
+  <link rel="canonical" href="https://yourusername.github.io/ott-tracker/">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Social Sharing -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="OTT Release Dates & Official Trailers Tracker">
+  <meta property="og:description" content="Check streaming dates and watch official trailers for the newest theater-to-OTT releases.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=1200">
+  <meta property="og:url" content="https://yourusername.github.io/ott-tracker/">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="OTT Release Dates & Official Trailers Tracker">
+  <meta name="twitter:description" content="Check streaming dates and watch official trailers for the newest releases.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=1200">
+
+  <!-- Structured Data: JSON-LD for Google Rich Results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Upcoming & Recent OTT Movie Releases",
+    "description": "Directory of movie release dates across streaming platforms.",
+    "itemListElement": []
+  }
+  </script>
+
+  <!-- Adsterra Header Scripts (e.g., Social Bar / Popunder if active) -->
+  <!-- <script type='text/javascript' src='//your-adsterra-script.js'></script> -->
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Site Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="#" class="logo">OTT<span>Radar</span></a>
+      <div class="filters">
+        <select id="language-filter" aria-label="Filter by Language">
+          <option value="ml">Malayalam</option>
+          <option value="hi">Hindi</option>
+          <option value="ta">Tamil</option>
+          <option value="te">Telugu</option>
+          <option value="en">English</option>
+        </select>
+        <select id="sort-filter" aria-label="Sort Movies">
+          <option value="release_date.desc">Latest OTT Dates</option>
+          <option value="popularity.desc">Most Popular</option>
+        </select>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Leaderboard Ad Slot (728x90 / Mobile 320x50) -->
+  <div class="ad-wrapper leaderboard-ad" aria-label="Advertisement">
+    <div class="ad-slot">
+      <!-- PASTE ADSTERRA 728x90 OR 320x50 BANNER CODE HERE -->
+      <span class="ad-badge">Advertisement</span>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <h1>Latest OTT Movie Release Dates & Trailers</h1>
+    <p>Track streaming premieres on Netflix, Prime Video, Disney+ Hotstar, and SonyLIV.</p>
+  </header>
+
+  <!-- Main Grid -->
+  <main class="content-wrapper">
+    <section id="movie-grid" class="movie-grid" aria-live="polite">
+      <!-- Dynamic movie cards injected by app.js -->
+    </section>
+  </main>
+
+  <!-- In-Feed / Bottom Ad Slot -->
+  <div class="ad-wrapper native-ad" aria-label="Advertisement">
+    <div class="ad-slot">
+      <!-- PASTE ADSTERRA 4:1 OR NATIVE BANNER SCRIPT HERE -->
+      <span class="ad-badge">Sponsored Content</span>
+    </div>
+  </div>
+
+  <!-- Accessible YouTube Trailer Modal -->
+  <div id="trailer-modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div class="modal-container">
+      <button class="modal-close" id="modal-close" aria-label="Close trailer">&times;</button>
+      <div class="video-responsive">
+        <iframe id="trailer-iframe" src="" title="YouTube Trailer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 OTTRadar. Streaming platforms and poster copyrights belong to their respective distributors.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
