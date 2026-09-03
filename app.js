@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Replace with your personal TMDB API Read Key (v3)
-  const TMDB_API_KEY = 'YOUR_TMDB_API_KEY';
+  const TMDB_API_KEY = '952e7b20d619d3157e526949b222a49d';
   const IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
 
   const grid = document.getElementById('movie-grid');
