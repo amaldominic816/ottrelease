@@ -1,9 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Replace with your personal TMDB API Key (v3)
+  // Put your TMDB v3 API Key here
   const TMDB_API_KEY = '952e7b20d619d3157e526949b222a49d';
   const IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
+  const LOGO_BASE = 'https://image.tmdb.org/t/p/w92';
 
-  // DOM Elements
+  // DOM Handles
   const grid = document.getElementById('movie-grid');
   const languageSelect = document.getElementById('language-filter');
   const sortSelect = document.getElementById('sort-filter');
@@ -12,134 +13,154 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalOverlay = document.getElementById('modal-overlay');
   const iframe = document.getElementById('trailer-iframe');
 
-  // Fetch movies and attach precise OTT digital release data
   async function loadMovies() {
-    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-secondary);">Checking OTT premiere dates & platforms...</p>';
+    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-secondary);">Querying verified OTT premieres & platform logos...</p>';
 
     const lang = languageSelect ? languageSelect.value : 'ml';
     const sort = sortSelect ? sortSelect.value : 'primary_release_date.desc';
 
-    const endpoint = `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API_KEY}&with_original_language=${lang}&sort_by=${sort}&page=1`;
+    const discoverUrl = `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API_KEY}&with_original_language=${lang}&sort_by=${sort}&page=1`;
 
     try {
-      const res = await fetch(endpoint);
-      if (!res.ok) throw new Error(`TMDB HTTP error: ${res.status}`);
+      const res = await fetch(discoverUrl);
+      if (!res.ok) throw new Error(`TMDB error: ${res.status}`);
 
       const data = await res.json();
       const basicMovies = (data.results || []).slice(0, 12);
 
       if (basicMovies.length === 0) {
-        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-secondary);">No movies found for this selection.</p>';
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-secondary);">No movies found.</p>';
         return;
       }
 
-      // Fetch deep release data (Digital type 4 + Watch Providers) in parallel
+      // Fetch digital dates and platform logos concurrently
       const detailedMovies = await Promise.all(
         basicMovies.map(async (movie) => {
           try {
             const detailRes = await fetch(
               `https://api.themoviedb.org/3/movie/${movie.id}?api_key=${TMDB_API_KEY}&append_to_response=release_dates,watch/providers`
             );
-            if (!detailRes.ok) return { ...movie, ottDate: null, ottPlatform: null };
+            if (!detailRes.ok) return { ...movie, ottDate: null, ottPlatform: null, ottLogo: null };
             const detailData = await detailRes.json();
 
-            // 1. Extract Digital / OTT Release Date (TMDB Type 4)
+            // Extract Type 4 (Digital/OTT) release date
             let ottDate = null;
-            const releaseData = detailData.release_dates ? detailData.release_dates.results : [];
-            // Target India ('IN') region first, then fallback to global releases
-            const countryRelease = releaseData.find(c => c.iso_3166_1 === 'IN') || releaseData[0];
-            
-            if (countryRelease && countryRelease.release_dates) {
-              const digitalRelease = countryRelease.release_dates.find(r => r.type === 4);
-              if (digitalRelease && digitalRelease.release_date) {
-                ottDate = digitalRelease.release_date.split('T')[0];
+            const countryReleases = detailData.release_dates ? detailData.release_dates.results : [];
+            const targetedCountry = countryReleases.find(c => c.iso_3166_1 === 'IN') || countryReleases[0];
+
+            if (targetedCountry && targetedCountry.release_dates) {
+              const digitalEntry = targetedCountry.release_dates.find(r => r.type === 4);
+              if (digitalEntry && digitalEntry.release_date) {
+                ottDate = digitalEntry.release_date.split('T')[0];
               }
             }
 
-            // 2. Extract Streaming Platform Name (e.g. Disney+ Hotstar, Netflix, JioCinema)
+            // Extract OTT platform name and CDN logo path
             let ottPlatform = null;
+            let ottLogo = null;
             const providers = detailData['watch/providers'] ? detailData['watch/providers'].results : null;
             const targetRegion = providers && (providers.IN || providers.US);
+
             if (targetRegion && targetRegion.flatrate && targetRegion.flatrate.length > 0) {
-              ottPlatform = targetRegion.flatrate[0].provider_name;
+              const primaryProvider = targetRegion.flatrate[0];
+              ottPlatform = primaryProvider.provider_name;
+              ottLogo = primaryProvider.logo_path ? `${LOGO_BASE}${primaryProvider.logo_path}` : null;
             }
 
-            return { ...movie, ottDate, ottPlatform };
+            return { ...movie, ottDate, ottPlatform, ottLogo };
           } catch {
-            return { ...movie, ottDate: null, ottPlatform: null };
+            return { ...movie, ottDate: null, ottPlatform: null, ottLogo: null };
           }
         })
       );
 
-      renderCards(detailedMovies);
+      renderCardsWithAds(detailedMovies);
       updateSchemaOrg(detailedMovies);
     } catch (err) {
-      grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #ef4444;">Unable to load movies. Please check your TMDB API key.</p>';
-      console.error('Fetch error:', err);
+      grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #ef4444;">Could not load releases. Check TMDB API key.</p>';
+      console.error(err);
     }
   }
 
-  // Render cards with OTT & Theatrical badges
-  function renderCards(movies) {
+  function renderCardsWithAds(movies) {
     grid.innerHTML = '';
     const today = new Date().toISOString().split('T')[0];
 
-    movies.forEach(movie => {
+    movies.forEach((movie, index) => {
+      // In-Grid Native Ad insertion after every 6th card
+      if (index === 6) {
+        const adCard = document.createElement('article');
+        adCard.className = 'card-native-ad';
+        adCard.innerHTML = `
+          <span class="ad-label">Sponsored</span>
+          <div style="font-size:0.85rem; color:#94a3b8; margin: 1rem 0;">Adsterra In-Feed Recommendation</div>
+          <!-- PASTE ADSTERRA 300x250 RECTANGLE CODE HERE -->
+          <div style="width:250px; height:250px; background:#1e2433; display:flex; align-items:center; justify-content:center; font-size:0.75rem; color:#64748b; border: 1px dashed #334155;">
+            Adsterra Native Ad
+          </div>
+        `;
+        grid.appendChild(adCard);
+      }
+
       const poster = movie.poster_path
         ? `${IMAGE_BASE}${movie.poster_path}`
         : 'https://via.placeholder.com/500x750?text=No+Poster';
 
       const safeTitle = (movie.title || 'Untitled').replace(/"/g, '&quot;');
-      const theatricalDate = movie.release_date || 'Date TBA';
-      const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A';
+      const theatrical = movie.release_date || 'In Theaters';
 
-      // Determine OTT Status, Badge, and Display Text
-      let ottBadgeText = 'OTT: TBA';
-      let ottStatusClass = 'status-tba';
-      let ottDetailText = 'OTT Release: Expected Soon';
+      // Status check
+      let statusClass = 'tba';
+      let ottDisplayDate = 'Announcing Soon';
 
       if (movie.ottDate) {
         if (movie.ottDate <= today) {
-          ottBadgeText = movie.ottPlatform ? `Streaming on ${movie.ottPlatform}` : 'Now Streaming';
-          ottStatusClass = 'status-live';
-          ottDetailText = `Available on OTT (${movie.ottDate})`;
+          statusClass = 'live';
+          ottDisplayDate = movie.ottDate;
         } else {
-          ottBadgeText = `OTT: ${movie.ottDate}`;
-          ottStatusClass = 'status-upcoming';
-          ottDetailText = `OTT Premiere: ${movie.ottDate}`;
+          statusClass = 'upcoming';
+          ottDisplayDate = movie.ottDate;
         }
+      }
+
+      // Platform badge with logo
+      let platformBadge = '';
+      if (movie.ottLogo) {
+        platformBadge = `
+          <div class="platform-pill">
+            <img src="${movie.ottLogo}" alt="${movie.ottPlatform}" loading="lazy">
+            <span>${movie.ottPlatform}</span>
+          </div>`;
       } else if (movie.ottPlatform) {
-        ottBadgeText = `Streaming on ${movie.ottPlatform}`;
-        ottStatusClass = 'status-live';
-        ottDetailText = `Streaming on ${movie.ottPlatform}`;
+        platformBadge = `
+          <div class="platform-pill">
+            <span>${movie.ottPlatform}</span>
+          </div>`;
       }
 
       const card = document.createElement('article');
       card.className = 'card';
-      card.setAttribute('itemscope', '');
-      card.setAttribute('itemtype', 'https://schema.org/Movie');
-
       card.innerHTML = `
-        <div class="poster-container">
-          <img src="${poster}" alt="${safeTitle} poster" loading="lazy" itemprop="image">
-          <span class="badge-ott ${ottStatusClass}">${ottBadgeText}</span>
+        <div class="poster-box">
+          <img src="${poster}" alt="${safeTitle} poster" loading="lazy">
+          ${platformBadge}
         </div>
-        <div class="card-body">
-          <h2 class="movie-title" itemprop="name">${movie.title}</h2>
-          <div class="meta-info">Rating: ${rating}/10 &bull; ${(movie.original_language || '').toUpperCase()}</div>
+        <div class="card-content">
+          <h2 class="card-title">${movie.title}</h2>
+          <div class="card-meta">Rating: ${movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}/10 &bull; ${(movie.original_language || '').toUpperCase()}</div>
 
-          <div class="dates-container">
-            <div class="release-row">
-              <span class="date-label">Theatrical:</span>
-              <span class="date-val">${theatricalDate}</span>
+          <div class="date-schedule">
+            <div class="schedule-row">
+              <span class="label-muted">Theater:</span>
+              <span>${theatrical}</span>
             </div>
-            <div class="release-row ott-row">
-              <span class="date-label">OTT Date:</span>
-              <span class="date-val ${ottStatusClass}">${movie.ottDate || 'Announcing Soon'}</span>
+            <div class="schedule-row">
+              <span class="label-muted">OTT Premiere:</span>
+              <span class="val-ott ${statusClass}">${ottDisplayDate}</span>
             </div>
           </div>
 
-          <button class="btn-trailer" data-movie-id="${movie.id}" data-movie-title="${safeTitle}" aria-label="Watch trailer for ${safeTitle}">
+          <button class="btn-trailer" data-id="${movie.id}" data-title="${safeTitle}">
             ▶ Watch Trailer
           </button>
         </div>
@@ -148,40 +169,36 @@ document.addEventListener('DOMContentLoaded', () => {
       grid.appendChild(card);
     });
 
-    // Attach click handlers to trailer buttons
+    // Trailer triggers
     document.querySelectorAll('.btn-trailer').forEach(btn => {
       btn.addEventListener('click', () => {
-        const movieId = btn.getAttribute('data-movie-id');
-        const movieTitle = btn.getAttribute('data-movie-title');
-        openTrailer(movieId, movieTitle);
+        openTrailer(btn.getAttribute('data-id'), btn.getAttribute('data-title'));
       });
     });
   }
 
-  // Fetch trailer from TMDB; fallback to YouTube direct search
   async function openTrailer(movieId, movieTitle) {
     try {
-      const endpoint = `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${TMDB_API_KEY}&include_video_language=ml,en,null`;
+      const endpoint = `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${TMDB_API_KEY}&include_video_language=ml,ta,hi,en,null`;
       const res = await fetch(endpoint);
       const data = await res.json();
       const videos = data.results || [];
 
-      const matchedVideo = videos.find(v => v.site === 'YouTube' && v.type === 'Trailer')
-                        || videos.find(v => v.site === 'YouTube' && v.type === 'Teaser')
-                        || videos.find(v => v.site === 'YouTube');
+      const trailer = videos.find(v => v.site === 'YouTube' && v.type === 'Trailer')
+                   || videos.find(v => v.site === 'YouTube' && v.type === 'Teaser')
+                   || videos.find(v => v.site === 'YouTube');
 
-      if (matchedVideo && matchedVideo.key) {
-        iframe.src = `https://www.youtube.com/embed/${matchedVideo.key}?autoplay=1`;
+      if (trailer && trailer.key) {
+        iframe.src = `https://www.youtube.com/embed/${trailer.key}?autoplay=1`;
         modal.classList.add('active');
         modal.setAttribute('aria-hidden', 'false');
       } else {
-        const ytQuery = encodeURIComponent(`${movieTitle} official trailer`);
-        window.open(`https://www.youtube.com/results?search_query=${ytQuery}`, '_blank', 'noopener,noreferrer');
+        const query = encodeURIComponent(`${movieTitle} official trailer`);
+        window.open(`https://www.youtube.com/results?search_query=${query}`, '_blank', 'noopener,noreferrer');
       }
-    } catch (err) {
-      console.error('Error fetching trailer:', err);
-      const ytQuery = encodeURIComponent(`${movieTitle} official trailer`);
-      window.open(`https://www.youtube.com/results?search_query=${ytQuery}`, '_blank', 'noopener,noreferrer');
+    } catch {
+      const query = encodeURIComponent(`${movieTitle} official trailer`);
+      window.open(`https://www.youtube.com/results?search_query=${query}`, '_blank', 'noopener,noreferrer');
     }
   }
 
@@ -198,16 +215,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function updateSchemaOrg(movies) {
-    const script = document.querySelector('script[type="application/ld+json"]');
+    const script = document.getElementById('movie-schema');
     if (!script) return;
 
-    const schemaData = {
+    script.textContent = JSON.stringify({
       "@context": "https://schema.org",
       "@type": "ItemList",
-      "name": "Upcoming & Current OTT Releases",
-      "itemListElement": movies.map((m, index) => ({
+      "name": "Latest Movie OTT Release Dates",
+      "itemListElement": movies.map((m, i) => ({
         "@type": "ListItem",
-        "position": index + 1,
+        "position": i + 1,
         "item": {
           "@type": "Movie",
           "name": m.title,
@@ -215,9 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
           "image": m.poster_path ? `${IMAGE_BASE}${m.poster_path}` : undefined
         }
       }))
-    };
-
-    script.textContent = JSON.stringify(schemaData);
+    });
   }
 
   if (languageSelect) languageSelect.addEventListener('change', loadMovies);
