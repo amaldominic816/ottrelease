@@ -17,15 +17,15 @@ def save_posted_id(movie_id):
     with open(HISTORY_FILE, "a", encoding="utf-8") as f:
         f.write(f"{movie_id}\n")
 
-def fetch_ott_movies():
-    # Query latest Malayalam titles (change 'ml' to 'ta', 'te', or 'hi' as needed)
-    discover_url = (
+def fetch_candidates():
+    # Query popular and recent Malayalam movies
+    url = (
         f"https://api.themoviedb.org/3/discover/movie"
         f"?api_key={TMDB_API_KEY}&with_original_language=ml"
-        f"&sort_by=primary_release_date.desc&page=1"
+        f"&sort_by=popularity.desc&page=1"
     )
-    res = requests.get(discover_url).json()
-    return res.get("results", [])[:10]
+    res = requests.get(url).json()
+    return res.get("results", [])[:15]
 
 def get_movie_details(movie_id):
     url = (
@@ -44,8 +44,8 @@ def send_telegram_post(movie, ott_date, platform):
         f"🎬 <b>{title}</b>\n"
         f"⭐ Rating: {rating:.1f}/10\n"
         f"📺 Platform: <b>{platform}</b>\n"
-        f"📅 OTT Release: <b>{ott_date}</b>\n\n"
-        f"🔗 <a href='{WEBSITE_URL}'>Watch Official Trailer & Track Dates</a>"
+        f"📅 OTT Status: <b>{ott_date}</b>\n\n"
+        f"🔗 <a href='{WEBSITE_URL}'>Check Full Details & Trailer</a>"
     )
 
     telegram_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
@@ -56,49 +56,73 @@ def send_telegram_post(movie, ott_date, platform):
         "parse_mode": "HTML"
     }
 
-    response = requests.post(telegram_url, data=payload)
-    return response.status_code == 200
+    try:
+        response = requests.post(telegram_url, data=payload)
+        res_data = response.json()
+        if not res_data.get("ok"):
+            print(f"Telegram API Error: {res_data.get('description')}")
+            return False
+        return True
+    except Exception as e:
+        print(f"Network error while sending to Telegram: {e}")
+        return False
 
 def main():
     if not TMDB_API_KEY or not BOT_TOKEN or not CHAT_ID:
-        print("Missing required environment secrets.")
+        print("Error: Missing required environment variables (TMDB_API_KEY, TELEGRAM_BOT_TOKEN, or TELEGRAM_CHAT_ID).")
         return
 
     posted_ids = get_posted_ids()
-    candidates = fetch_ott_movies()
+    candidates = fetch_candidates()
+    print(f"Fetched {len(candidates)} titles from TMDB.")
+
+    posted_count = 0
 
     for movie in candidates:
         movie_id = str(movie["id"])
+        title = movie.get("title", "Untitled")
+
         if movie_id in posted_ids:
+            print(f"Skipping (already posted): {title}")
             continue
 
         details = get_movie_details(movie_id)
 
-        # 1. Locate Type 4 (Digital/OTT) release date for India
+        # 1. Check for Digital / OTT Release (Type 4)
         ott_date = None
         release_countries = details.get("release_dates", {}).get("results", [])
-        india_release = next((c for c in release_countries if c["iso_3166_1"] == "IN"), None)
-        
+        india_release = next((c for c in release_countries if c.get("iso_3166_1") == "IN"), None) or (release_countries[0] if release_countries else None)
+
         if india_release:
-            digital_entry = next((r for r in india_release.get("release_dates", []) if r["type"] == 4), None)
+            digital_entry = next((r for r in india_release.get("release_dates", []) if r.get("type") == 4), None)
             if digital_entry and digital_entry.get("release_date"):
                 ott_date = digital_entry["release_date"].split("T")[0]
 
-        # 2. Extract active streaming platform
-        providers = details.get("watch/providers", {}).get("results", {}).get("IN", {})
+        # 2. Check for Watch Providers (India or Global)
+        providers_data = details.get("watch/providers", {}).get("results", {})
+        providers = providers_data.get("IN") or providers_data.get("US") or {}
         flatrate = providers.get("flatrate", [])
         platform = flatrate[0]["provider_name"] if flatrate else None
 
-        # Post only if confirmed OTT date or active streaming provider is detected
+        print(f"Checking: {title} | OTT Date: {ott_date} | Platform: {platform}")
+
+        # Post if either OTT date or streaming platform is found
         if ott_date or platform:
             display_date = ott_date if ott_date else "Now Streaming"
             display_platform = platform if platform else "Announcing Soon"
 
-            print(f"Posting new release: {movie['title']} ({display_platform})")
+            print(f"-> Sending to Telegram: {title} ({display_platform})")
             success = send_telegram_post(movie, display_date, display_platform)
             if success:
                 save_posted_id(movie_id)
                 posted_ids.add(movie_id)
+                posted_count += 1
+                # Limit to 2 posts per run to avoid spamming the channel
+                if posted_count >= 2:
+                    break
+
+    if posted_count == 0:
+        print("No new confirmed OTT titles met the posting criteria in this run.")
 
 if __name__ == "__main__":
     main()
