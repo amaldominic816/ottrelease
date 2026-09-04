@@ -4,11 +4,8 @@ import requests
 TMDB_API_KEY = os.environ.get("TMDB_API_KEY")
 BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
-WEBSITE_URL = os.environ.get("WEBSITE_URL", "https://amaldominic816.github.io/ottrelease/")
-WEBSITE_URL = RAW_WEBSITE_URL.rstrip('/') + '/'
+WEBSITE_URL = os.environ.get("WEBSITE_URL", "https://amaldominic816.github.io/ottrelease/").rstrip('/') + '/'
 HISTORY_FILE = "posted_ids.txt"
-
-
 
 def get_posted_ids():
     if not os.path.exists(HISTORY_FILE):
@@ -21,7 +18,6 @@ def save_posted_id(movie_id):
         f.write(f"{movie_id}\n")
 
 def fetch_candidates():
-    # Query popular and recent Malayalam releases from TMDB
     url = (
         f"https://api.themoviedb.org/3/discover/movie"
         f"?api_key={TMDB_API_KEY}&with_original_language=ml"
@@ -44,7 +40,6 @@ def send_telegram_post(movie, ott_date, platform):
     title = movie.get("title", "Untitled")
     rating = movie.get("vote_average", 0)
 
-    # Direct link to the dedicated movie detail page
     movie_detail_url = f"{WEBSITE_URL}movie.html?id={movie_id}"
 
     caption = (
@@ -96,7 +91,7 @@ def main():
 
         details = get_movie_details(movie_id)
 
-        # 1. Look for Digital/OTT release date (Type 4)
+        # Look for Type 4 (Digital/OTT) release date
         ott_date = None
         release_countries = details.get("release_dates", {}).get("results", [])
         india_release = next((c for c in release_countries if c.get("iso_3166_1") == "IN"), None) or (release_countries[0] if release_countries else None)
@@ -106,7 +101,7 @@ def main():
             if digital_entry and digital_entry.get("release_date"):
                 ott_date = digital_entry["release_date"].split("T")[0]
 
-        # 2. Check for active streaming provider (India or Global)
+        # Look for streaming platform provider
         providers_data = details.get("watch/providers", {}).get("results", {})
         providers = providers_data.get("IN") or providers_data.get("US") or {}
         flatrate = providers.get("flatrate", [])
@@ -114,7 +109,6 @@ def main():
 
         print(f"Inspecting: {title} | OTT Date: {ott_date} | Platform: {platform}")
 
-        # Post if either an OTT date or streaming platform is found
         if ott_date or platform:
             display_date = ott_date if ott_date else "Now Streaming"
             display_platform = platform if platform else "Announcing Soon"
@@ -125,7 +119,6 @@ def main():
                 save_posted_id(movie_id)
                 posted_ids.add(movie_id)
                 posted_count += 1
-                # Limit to 2 posts per automatic run to prevent channel rate-limiting
                 if posted_count >= 2:
                     break
 
