@@ -448,6 +448,181 @@ footer {
   font-size: 0.8rem;
   border-top: 1px solid var(--border-card);
 }
+/* Detailed Page Additions */
+.back-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.movie-backdrop {
+  height: 280px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  margin-bottom: -100px;
+  position: relative;
+  z-index: 1;
+}
+
+.detail-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  margin-bottom: 2.5rem;
+}
+
+.detail-poster {
+  width: 260px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--border-card);
+  background: var(--bg-card);
+}
+
+.detail-poster img {
+  width: 100%;
+  display: block;
+}
+
+.detail-info {
+  flex: 1;
+}
+
+.detail-info h1 {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.detail-meta {
+  display: flex;
+  gap: 0.6rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.detail-genres {
+  color: #38bdf8;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.ott-callout-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  padding: 1.2rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ott-status-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+}
+
+.platform-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.platform-indicator img {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+}
+
+.btn-stream {
+  background: #16a34a;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  padding: 0.65rem 1rem;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.btn-stream:hover {
+  background: #15803d;
+}
+
+.meta-field {
+  font-size: 0.88rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.meta-field strong {
+  color: var(--text-primary);
+}
+
+.detail-section {
+  margin-bottom: 2.5rem;
+}
+
+.detail-section h2 {
+  font-size: 1.3rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-card);
+  padding-bottom: 0.5rem;
+}
+
+.overview-text {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.trailer-fallback {
+  background: var(--bg-card);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-card);
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .movie-backdrop {
+    height: 160px;
+    margin-bottom: -60px;
+  }
+  .detail-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .detail-poster {
+    width: 180px;
+  }
+  .detail-meta {
+    justify-content: center;
+  }
+  .ott-status-line {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}
 
 /* Mobile Breakpoints */
 @media (max-width: 768px) {
