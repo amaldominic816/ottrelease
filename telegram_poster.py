@@ -4,7 +4,7 @@ import requests
 TMDB_API_KEY = os.environ.get("TMDB_API_KEY")
 BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
-WEBSITE_URL = os.environ.get("WEBSITE_URL", "https://yourusername.github.io/ott-tracker/")
+WEBSITE_URL = os.environ.get("WEBSITE_URL", "https://amaldominic816.github.io/ottrelease/")
 HISTORY_FILE = "posted_ids.txt"
 
 def get_posted_ids():
