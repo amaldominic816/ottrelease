@@ -31,7 +31,7 @@ jobs:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          WEBSITE_URL: "https://yourusername.github.io/ott-tracker/"
+          WEBSITE_URL: "https://amaldominic816.github.io/ottrelease/"
         run: |
           python telegram_poster.py
 
